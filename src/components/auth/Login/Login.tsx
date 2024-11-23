@@ -1,20 +1,17 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Grid, Button, Typography, Paper } from '@mui/material';
 import { useValidPassword, useValidUsername } from '../../../hooks/useAuthHooks';
 import { Password, Username } from '../../authComponents';
-import { AuthContext } from '../../../contexts/AuthContext';
 
 const LogIn: React.FunctionComponent = () => {
     const { username, setUsername, usernameIsValid } = useValidUsername('');
     const { password, setPassword, passwordIsValid } = useValidPassword('');
     const [error, setError] = useState('');
+
     const isValid = !usernameIsValid || username.length === 0 || !passwordIsValid || password.length === 0;
 
     const navigate = useNavigate();
-
-    // Uncomment and use this if Cognito is implemented
-    // const authContext = useContext(AuthContext);
 
     const checkHardCodedCredentials = (username: string, password: string) => {
         if (username !== 'administrator' || password !== 'Team_39!') {
@@ -25,8 +22,6 @@ const LogIn: React.FunctionComponent = () => {
 
     const signInClicked = async () => {
         try {
-            // Uncomment below for Cognito implementation
-            // await authContext.signInWithEmail(username, password);
             checkHardCodedCredentials(username, password);
             navigate('/admin');
         } catch (err: any) {
@@ -38,7 +33,7 @@ const LogIn: React.FunctionComponent = () => {
         }
     };
 
-    const passwordResetClicked = () => {
+    const passwordResetClicked = async () => {
         navigate('requestcode');
     };
 

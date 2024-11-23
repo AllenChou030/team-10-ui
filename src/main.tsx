@@ -1,3 +1,4 @@
+// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -5,27 +6,16 @@ import './index.css';
 import { Amplify } from 'aws-amplify';
 import AuthProvider from './contexts/AuthContext';
 import { PatientsProvider } from './contexts/PatientsContext';
-import awsconfig from './aws-exports'; // Amplify configuration file
-import { AmplifyConfig } from '@aws-amplify/core';
+import awsconfig from './aws-exports'; // Should be the Amplify configuration file
 
-// Ensure awsconfig has the right type
-const amplifyConfig: AmplifyConfig = awsconfig;
+Amplify.configure(awsconfig);
 
-// Configure Amplify
-Amplify.configure(amplifyConfig);
-
-// Ensure `document.getElementById('root')` is not null
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-    throw new Error('Root element not found');
-}
-
-ReactDOM.createRoot(rootElement).render(
-    <React.StrictMode>
-        <AuthProvider>
-            <PatientsProvider>
-                <App />
-            </PatientsProvider>
-        </AuthProvider>
-    </React.StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <PatientsProvider>
+        <App />
+      </PatientsProvider>
+    </AuthProvider>
+  </React.StrictMode>,
 );
