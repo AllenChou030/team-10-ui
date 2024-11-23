@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
+  base: '/team-10-ui/',
   ...(process.env.NODE_ENV === 'development'
     ? {
       define: {
