@@ -18,16 +18,20 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePatients } from '../../contexts/PatientsContext';
 
+type PatientData = {
+    label: string;
+    value: string | number;
+};
+
 const AdminVitalView: React.FC = () => {
     const params = useParams<{ id: string }>();
     const userId = params.id;
-    
+
     const { getPatientById, editPatient } = usePatients();
     const navigate = useNavigate();
     const [patient, setPatient] = useState(() => (userId ? getPatientById(userId) : undefined));
-    console.log(patient);
     const [editIndex, setEditIndex] = useState<number | null>(null);
-    const [editedValue, setEditedValue] = useState<string>('');
+    const [editedValue, setEditedValue] = useState<string | number>(''); // Allow string or number
 
     useEffect(() => {
         if (userId) {
@@ -44,28 +48,28 @@ const AdminVitalView: React.FC = () => {
         );
     }
 
-    const patientData = [
+    const patientData: PatientData[] = [
         { label: 'ID', value: patient.id },
         { label: 'Username', value: patient.username },
         { label: 'Name', value: patient.name },
         { label: 'Email', value: patient.email },
-        { label: 'Age', value: patient.age.toString() },
+        { label: 'Age', value: patient.age },
         { label: 'Gender', value: patient.gender },
         { label: 'Occupation', value: patient.occupation },
-        { label: 'Sleep Duration', value: patient.sleepDuration.toString() },
-        { label: 'Quality of Sleep', value: patient.qualityOfSleep.toString() },
-        { label: 'Physical Activity Level', value: patient.physicalActivityLevel.toString() },
-        { label: 'Stress Level', value: patient.stressLevel.toString() },
+        { label: 'Sleep Duration', value: patient.sleepDuration },
+        { label: 'Quality of Sleep', value: patient.qualityOfSleep },
+        { label: 'Physical Activity Level', value: patient.physicalActivityLevel },
+        { label: 'Stress Level', value: patient.stressLevel },
         { label: 'BMI Category', value: patient.bmiCategory },
         { label: 'Blood Pressure', value: patient.bloodPressure },
-        { label: 'Heart Rate', value: patient.heartRate.toString() },
-        { label: 'Daily Steps', value: patient.dailySteps.toString() },
+        { label: 'Heart Rate', value: patient.heartRate },
+        { label: 'Daily Steps', value: patient.dailySteps },
         { label: 'Sleep Disorder', value: patient.sleepDisorder },
     ];
 
     const handleEditClick = (index: number) => {
         setEditIndex(index);
-        setEditedValue(patientData[index].value);
+        setEditedValue(String(patientData[index].value)); // Convert value to string
     };
 
     const handleSaveClick = () => {
@@ -75,49 +79,49 @@ const AdminVitalView: React.FC = () => {
 
             switch (updatedField) {
                 case 'Username':
-                    updatedPatient.username = editedValue;
+                    updatedPatient.username = editedValue as string;
                     break;
                 case 'Name':
-                    updatedPatient.name = editedValue;
+                    updatedPatient.name = editedValue as string;
                     break;
                 case 'Email':
-                    updatedPatient.email = editedValue;
+                    updatedPatient.email = editedValue as string;
                     break;
                 case 'Age':
-                    updatedPatient.age = parseInt(editedValue, 10);
+                    updatedPatient.age = parseInt(editedValue as string, 10);
                     break;
                 case 'Gender':
-                    updatedPatient.gender = editedValue;
+                    updatedPatient.gender = editedValue as string;
                     break;
                 case 'Occupation':
-                    updatedPatient.occupation = editedValue;
+                    updatedPatient.occupation = editedValue as string;
                     break;
                 case 'Sleep Duration':
-                    updatedPatient.sleepDuration = parseFloat(editedValue);
+                    updatedPatient.sleepDuration = parseFloat(editedValue as string);
                     break;
                 case 'Quality of Sleep':
-                    updatedPatient.qualityOfSleep = parseInt(editedValue, 10);
+                    updatedPatient.qualityOfSleep = parseInt(editedValue as string, 10);
                     break;
                 case 'Physical Activity Level':
-                    updatedPatient.physicalActivityLevel = parseInt(editedValue, 10);
+                    updatedPatient.physicalActivityLevel = parseInt(editedValue as string, 10);
                     break;
                 case 'Stress Level':
-                    updatedPatient.stressLevel = parseInt(editedValue, 10);
+                    updatedPatient.stressLevel = parseInt(editedValue as string, 10);
                     break;
                 case 'BMI Category':
-                    updatedPatient.bmiCategory = editedValue;
+                    updatedPatient.bmiCategory = parseFloat(editedValue as string);
                     break;
                 case 'Blood Pressure':
-                    updatedPatient.bloodPressure = editedValue;
+                    updatedPatient.bloodPressure = editedValue as string;
                     break;
                 case 'Heart Rate':
-                    updatedPatient.heartRate = parseInt(editedValue, 10);
+                    updatedPatient.heartRate = parseInt(editedValue as string, 10);
                     break;
                 case 'Daily Steps':
-                    updatedPatient.dailySteps = parseInt(editedValue, 10);
+                    updatedPatient.dailySteps = parseInt(editedValue as string, 10);
                     break;
                 case 'Sleep Disorder':
-                    updatedPatient.sleepDisorder = editedValue;
+                    updatedPatient.sleepDisorder = editedValue as string;
                     break;
                 default:
                     break;
@@ -165,6 +169,7 @@ const AdminVitalView: React.FC = () => {
                                         <TextField
                                             value={editedValue}
                                             onChange={(e) => setEditedValue(e.target.value)}
+                                            type={typeof item.value === 'number' ? 'number' : 'text'}
                                         />
                                     ) : (
                                         item.value

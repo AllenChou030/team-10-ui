@@ -1,5 +1,3 @@
-// PatientsList.tsx - Axios call design
-
 import React, { useState } from 'react';
 import {
     Table,
@@ -19,7 +17,27 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../../contexts/PatientsContext';
-import axios from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
+
+interface Patient {
+    id: string;
+    username: string;
+    password?: string;
+    name: string;
+    email: string;
+    age: number;
+    gender: string;
+    occupation: string;
+    sleepDuration: number;
+    qualityOfSleep: number;
+    physicalActivityLevel: number;
+    stressLevel: number;
+    bmiCategory: number;
+    bloodPressure: string;
+    heartRate: number;
+    dailySteps: number;
+    sleepDisorder: string;
+}
 
 const PatientsList: React.FC = () => {
     const { patients, addPatient, deletePatient } = usePatients();
@@ -28,7 +46,7 @@ const PatientsList: React.FC = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [age, setAge] = useState<number | "">('');
+    const [age, setAge] = useState<number | ''>('');
     const [gender, setGender] = useState('');
     const [occupation, setOccupation] = useState('');
     const [page, setPage] = useState(0);
@@ -84,35 +102,35 @@ const PatientsList: React.FC = () => {
         setPage(0);
     };
 
-    const handleTestClick = (patientId: string) => {
+    const handleTestClick = async (patientId: string) => {
         const patient = patients.find((p) => p.id === patientId);
         if (!patient) {
             console.error('Patient not found');
             return;
         }
-        axios.put(`http://localhost:5000/patients/${patientId}/predict`, 
-            {
-                age: patient.age,
-                gender: patient.gender,
-                sleep_duration: patient.sleepDuration,
-                quality_of_sleep: patient.qualityOfSleep,
-                physical_activity_level: patient.physicalActivityLevel,
-                bmi: patient.bmiCategory,
-                blood_pressure: patient.bloodPressure,
-                heart_rate: patient.heartRate,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
+
+        try {
+            const response: AxiosResponse = await axios.put(
+                `http://localhost:5000/patients/${patientId}/predict`,
+                {
+                    age: patient.age,
+                    gender: patient.gender,
+                    sleep_duration: patient.sleepDuration,
+                    quality_of_sleep: patient.qualityOfSleep,
+                    physical_activity_level: patient.physicalActivityLevel,
+                    bmi: patient.bmiCategory,
+                    blood_pressure: patient.bloodPressure,
+                    heart_rate: patient.heartRate,
                 },
-                withCredentials: true
-            })
-            .then(response => {
-                console.log('Test result:', response.data);
-            })
-            .catch(error => {
-                console.error('There was an error processing the test!', error);
-            });
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true,
+                }
+            );
+            console.log('Test result:', response.data);
+        } catch (error: AxiosError | unknown) {
+            console.error('There was an error processing the test!', error);
+        }
     };
 
     return (
@@ -154,67 +172,17 @@ const PatientsList: React.FC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            {/* Add Patient Form */}
             <div style={{ padding: '16px' }}>
-                <TextField
-                    label="ID"
-                    variant="outlined"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Username"
-                    variant="outlined"
-                    value={username}
-                    autoComplete=''
-                    onChange={(e) => setUsername(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Password"
-                    variant="outlined"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Name"
-                    variant="outlined"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Age"
-                    variant="outlined"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value !== '' ? parseInt(e.target.value) : '')}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Gender"
-                    variant="outlined"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <TextField
-                    label="Occupation"
-                    variant="outlined"
-                    value={occupation}
-                    onChange={(e) => setOccupation(e.target.value)}
-                    style={{ margin: '16px' }}
-                />
-                <br></br>
-                <div style={{width: "100%", display: "flex", justifyContent: "center"}}>
+                <TextField label="ID" variant="outlined" value={id} onChange={(e) => setId(e.target.value)} style={{ margin: '16px' }} />
+                <TextField label="Username" variant="outlined" value={username} onChange={(e) => setUsername(e.target.value)} style={{ margin: '16px' }} />
+                <TextField label="Password" variant="outlined" type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ margin: '16px' }} />
+                <TextField label="Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} style={{ margin: '16px' }} />
+                <TextField label="Email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} style={{ margin: '16px' }} />
+                <TextField label="Age" variant="outlined" value={age} onChange={(e) => setAge(e.target.value !== '' ? parseInt(e.target.value, 10) : '')} style={{ margin: '16px' }} />
+                <TextField label="Gender" variant="outlined" value={gender} onChange={(e) => setGender(e.target.value)} style={{ margin: '16px' }} />
+                <TextField label="Occupation" variant="outlined" value={occupation} onChange={(e) => setOccupation(e.target.value)} style={{ margin: '16px' }} />
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <Button variant="contained" onClick={handleAddUser}>
                         Add Patient
                     </Button>
