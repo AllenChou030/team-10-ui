@@ -1,0 +1,41 @@
+.app {
+  width: 100lvw;
+  height: 100lvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login {
+  border: 1px solid black;
+  width: 50%;
+  max-width: 600px;
+  height: 75%;
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  width: 100%;
+  max-width: 700px;
+  height: 20%;
+}
+
+.patientMeta {
+  border: 1px solid black;
+  width: 30%;
+  max-width: 600px;
+  height: 75%;
+  display: flex;
+  justify-content: left;
+}
+
+.heading {
+  margin: 2.5rem !important;
+}
